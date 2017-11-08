@@ -15,7 +15,7 @@ type GreeterResponse struct {
 }
 
 func main() {
-	rawConn, err := nats.Connect(nats.DefaultURL)
+	rawConn, err := nats.Connect(nats.DefaultURL, nats.Name("service.greeter"))
 	if err != nil {
 		panic(err)
 	}
