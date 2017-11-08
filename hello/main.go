@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/nats-io/nats"
 	"fmt"
 	"runtime"
+
+	"github.com/nats-io/go-nats"
 )
 
 type GreeterRequest struct {
@@ -25,7 +26,8 @@ func main() {
 		panic(err)
 	}
 
-	conn.Subscribe("service.greeter.sayHello", func(subject, reply string, r GreeterRequest) {
+	conn.QueueSubscribe("service.greeter.sayHello", "greeter", func(_, reply string, r GreeterRequest) {
+		fmt.Printf("Received %s\n", r.Name)
 		conn.Publish(reply, GreeterResponse{Greet: fmt.Sprintf("Hello %s", r.Name)})
 	})
 

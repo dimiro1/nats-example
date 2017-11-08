@@ -1,10 +1,12 @@
 package main
 
 import (
-	"github.com/nats-io/nats"
-	"fmt"
-	"time"
 	"context"
+	"fmt"
+	"strconv"
+	"time"
+
+	"github.com/nats-io/go-nats"
 )
 
 type GreeterRequest struct {
@@ -26,12 +28,14 @@ func main() {
 		panic(err)
 	}
 
-	response := GreeterResponse{}
-	ctx, _ := context.WithTimeout(context.Background(), time.Second)
-	err = conn.RequestWithContext(ctx, "service.greeter.sayHello", &GreeterRequest{Name: "World"}, &response)
-	if err != nil {
-		panic(err)
-	}
+	for i := 0; i < 10; i++ {
+		response := GreeterResponse{}
+		ctx, _ := context.WithTimeout(context.Background(), time.Second)
+		err = conn.RequestWithContext(ctx, "service.greeter.sayHello", &GreeterRequest{Name: strconv.Itoa(i)}, &response)
+		if err != nil {
+			panic(err)
+		}
 
-	fmt.Println(response.Greet)
+		fmt.Println(response.Greet)
+	}
 }
